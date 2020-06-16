@@ -2,18 +2,18 @@ package com.innerproduct.ee.apps
 
 import cats.effect._
 import cats.implicits._
+import com.innerproduct.ee.debug._
 
 object UseResource extends IOApp {
   def run(args: List[String]): IO[ExitCode] =
-    myResource[IO]
+    myResource
       .use { r =>
-        IO(println(s"$r is so cool!"))
+        IO(s"$r is so cool!").debug()
       }
       .as(ExitCode.Success)
 
-  def myResource[F[_]: Sync]: Resource[F, String] =
+  val myResource: Resource[IO, String] =
     Resource.make(
-      Sync[F].delay(println("> acquiring MyResource")) *> Sync[F]
-        .delay("MyResource")
-    )(r => Sync[F].delay(println(s"< releasing $r")))
+      IO("> acquiring MyResource").debug() *> IO("MyResource")
+    )(r => IO(s"< releasing $r").debug().void)
 }

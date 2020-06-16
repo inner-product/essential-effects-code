@@ -10,9 +10,11 @@ import scala.concurrent.duration._
 object Timeout extends IOApp {
   def run(args: List[String]): IO[ExitCode] =
     for {
-      // race task and timeout <1>
-      // print which task finished first <2>
-      _ <- IO("done").debug()
+      done <- IO.race(task, timeout) // <1>
+      _ <- done match { // <2>
+        case Left(_)  => IO("   task: won").debug() // <3>
+        case Right(_) => IO("timeout: won").debug() // <4>
+      }
     } yield ExitCode.Success
 
   val task: IO[Unit]    = annotatedSleep("   task", 100.millis) // <7>

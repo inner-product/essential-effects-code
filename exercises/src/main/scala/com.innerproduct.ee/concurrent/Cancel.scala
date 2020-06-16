@@ -12,7 +12,7 @@ object Cancel extends IOApp {
     for {
       fiber <- task.start // <2>
       _ <- IO("pre-cancel").debug()
-      // cancel the fiber <3>
+      // <3>
       _ <- IO("canceled").debug()
     } yield ExitCode.Success
 
