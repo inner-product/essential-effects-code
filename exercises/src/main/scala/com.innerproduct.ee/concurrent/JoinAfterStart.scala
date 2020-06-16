@@ -3,17 +3,20 @@ package com.innerproduct.ee.concurrent
 import cats.effect._
 import cats.implicits._
 import com.innerproduct.ee.debug._
+import scala.annotation.nowarn
 
 object JoinAfterStart extends IOApp {
   
+  @nowarn
   def run(args: List[String]): IO[ExitCode] =
     for {
       fiber <- task.start // <1>
       _ <- IO("pre-join").debug() // <3>
-      _ <- fiber.join // <2>
+      // join the fiber <2>
       _ <- IO("post-join").debug() // <3>
     } yield ExitCode.Success
 
+  @nowarn
   val task: IO[String] =
-    IO("task").debug() // <3>
+    ??? // ensure we can see the effect <3>
 }

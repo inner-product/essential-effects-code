@@ -9,10 +9,10 @@ object Start extends IOApp {
   def run(args: List[String]): IO[ExitCode] =
     for {
       fiber <- task.start // <1>
-      // <2>
+      // run another task, what thread is it on? <2>
     } yield ExitCode.Success
 
   @nowarn
   val task: IO[String] =
-    ??? // <2>
+    ??? // ensure we can see the effect <2>
 }
