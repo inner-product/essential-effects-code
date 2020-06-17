@@ -9,23 +9,19 @@ import scala.concurrent.ExecutionContext
 object EvalOn extends IOApp {
 
   def run(args: List[String]): IO[ExitCode] =
-    (cs, cs) match {
-      case (cs1, cs2) =>
+    (ec, ec) match {
+      case (ec1, ec2) =>
         for {
           _ <- IO("on default").debug()
-          _ <- cs1.shift // <1>
-          _ <- IO("on cs1").debug()
-          _ <- cs2.shift // <1>
-          _ <- IO("on cs2").debug()
+          _ <- ContextShift[IO].evalOn(ec1)(IO("on ec1").debug())
+          _ <- ContextShift[IO].evalOn(ec2)(IO("on ec2").debug())
         } yield ExitCode.Success
     }
 
-  def cs: ContextShift[IO] =
-    IO.contextShift(
-      ExecutionContext.fromExecutor(Executors.newSingleThreadExecutor { r =>
-        val t = new Thread(r)
-        t.setDaemon(true) // so the JVM can exit
-        t
-      })
-    )
+  def ec: ExecutionContext =
+    ExecutionContext.fromExecutor(Executors.newSingleThreadExecutor { r =>
+      val t = new Thread(r)
+      t.setDaemon(true) // so the JVM can exit
+      t
+    })
 }

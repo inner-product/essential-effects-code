@@ -21,7 +21,7 @@ object ScatterGather extends IOApp {
     } yield ()
 
   def scatter(blocker: Blocker, tasks: List[Int]): IO[List[String]] =
-    ???
+    tasks.parTraverse(i => blocker.blockOn(task(i)))
 
   def task(i: Int): IO[String] =
     IO(Thread.sleep(1000)) *>

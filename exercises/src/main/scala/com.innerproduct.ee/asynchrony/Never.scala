@@ -13,5 +13,5 @@ object Never extends IOApp {
 
   @nowarn
   val never: IO[Nothing] =
-    IO.async(???) // <1>
+    IO.async(cb => ()) // <1>
 }

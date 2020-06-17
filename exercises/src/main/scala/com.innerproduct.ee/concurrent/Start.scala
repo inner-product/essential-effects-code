@@ -1,18 +1,17 @@
 package com.innerproduct.ee.concurrent
 
 import cats.effect._
-import scala.annotation.nowarn
+import cats.implicits._
+import com.innerproduct.ee.debug._
 
 object Start extends IOApp {
   
-  @nowarn
   def run(args: List[String]): IO[ExitCode] =
     for {
-      fiber <- task.start // <1>
-      // <2>
+      _ <- task.start // <1>
+      _ <- IO("task was started").debug() // <2>
     } yield ExitCode.Success
 
-  @nowarn
   val task: IO[String] =
-    ??? // <2>
+    IO("task").debug() // <2>
 }
