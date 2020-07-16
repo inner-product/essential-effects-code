@@ -14,7 +14,9 @@ object EvalOn extends IOApp {
         for {
           _ <- IO("on default").debug()
           _ <- ContextShift[IO].evalOn(ec1)(IO("on ec1").debug())
+          _ <- IO("after two").debug()
           _ <- ContextShift[IO].evalOn(ec2)(IO("on ec2").debug())
+          _ <- IO("after three").debug()
         } yield ExitCode.Success
     }
 
