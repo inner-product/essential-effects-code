@@ -7,12 +7,8 @@ import scala.concurrent.duration._
 object Future2 extends App {
   implicit val ec = ExecutionContext.global
 
-  def hello = // <1>
-    Future {
-      // Thread.sleep(500) // <4>
-      println(s"[${Thread.currentThread.getName}] Hello")
-    }
-  def world = Future(println(s"[${Thread.currentThread.getName}] World"))
+  def hello = Future(println(s"[${Thread.currentThread.getName}] Hello")) // <1>
+  def world = Future(println(s"[${Thread.currentThread.getName}] World")) // <1>
 
   val hw1: Future[Unit] =
     for {

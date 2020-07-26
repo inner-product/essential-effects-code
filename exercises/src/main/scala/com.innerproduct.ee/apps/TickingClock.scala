@@ -5,7 +5,7 @@ import cats.implicits._
 import com.innerproduct.ee.debug._
 import scala.concurrent.duration._
 
-object ClockApp extends IOApp {
+object TickingClock extends IOApp {
 
   def run(args: List[String]): IO[ExitCode] =
     tickingClock

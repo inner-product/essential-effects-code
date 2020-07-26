@@ -12,16 +12,20 @@ object Throughput extends IOApp {
       start <- now
       _ <- tasks.debug()
       end <- now
-      _ <- IO(s"minimum total time: $minTotalTime").debug()
-      duration = FiniteDuration(end - start, TimeUnit.MILLISECONDS)
-      _ <- IO(s"actual  total time: $duration").debug()
+      _ <- IO(s"numCpus: $numCpus").debug()
+      _ <- IO(s"numTasks (numCpus * 10): $numTasks").debug()
+      _ <- IO(s"sleepPerTask: $sleepPerTask").debug()
+      _ <- IO(s"minimum total time (sleepPerTask * 10 tasks/CPU): $minTotalTime").debug()
+      duration = (end - start).millis // <5>
+      _ <- IO(s"actual total time: $duration").debug()
     } yield ExitCode.Success
-
+    
   val now = Clock[IO].realTime(TimeUnit.MILLISECONDS)
-  val numTasks = Runtime.getRuntime().availableProcessors() * 10
-  val tasks = List.range(0, numTasks).parTraverse(task)
+  val numCpus = Runtime.getRuntime().availableProcessors()
+  val numTasks = numCpus * 10 // <2>
+  val tasks = List.range(0, numTasks).parTraverse(task) // <1>
   def task(i: Int): IO[Int] =
-    IO(Thread.sleep(sleepPerTask.toMillis)).as(i).debug()
+    IO(Thread.sleep(sleepPerTask.toMillis)).as(i).debug() // <3>
   val sleepPerTask = 100.millis
-  val minTotalTime = 10 * sleepPerTask
+  val minTotalTime = 10 * sleepPerTask // <4>
 }
