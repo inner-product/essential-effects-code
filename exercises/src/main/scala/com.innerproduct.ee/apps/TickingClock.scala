@@ -3,7 +3,7 @@ package com.innerproduct.ee.apps
 import cats.effect._
 import scala.annotation.nowarn
 
-object ClockApp extends IOApp {
+object TickingClock extends IOApp {
   @nowarn
   def run(args: List[String]): IO[ExitCode] =
     tickingClock

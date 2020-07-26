@@ -8,11 +8,11 @@ object ParMapN extends IOApp {
   def run(args: List[String]): IO[ExitCode] =
     par.as(ExitCode.Success)
 
-  val hello = IO("hello").debug()
-  val world = IO("world").debug()
+  val hello = IO("hello").debug() // <1>
+  val world = IO("world").debug() // <1>
 
   val par =
     (hello, world)
       .parMapN((h, w) => s"$h $w")
-      .debug()
+      .debug() // <2>
 }
