@@ -20,14 +20,6 @@ object EarlyRelease extends IOApp {
       conn <- DbConnection.make(config.connectURL)
     } yield conn
 
-  val dbConnectionResource2: Resource[IO, DbConnection] =
-    Resource.suspend(
-      loadConfig.map(config => DbConnection.make(config.connectURL))
-    )
-
-  lazy val loadConfig: IO[Config] =
-    sourceResource.use(Config.fromSource)
-
   lazy val configResource: Resource[IO, Config] = // <1>
     for {
       source <- sourceResource
