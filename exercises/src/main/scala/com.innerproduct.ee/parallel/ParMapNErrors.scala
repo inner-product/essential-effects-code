@@ -6,7 +6,7 @@ import com.innerproduct.ee.debug._
 
 object ParMapNErrors extends IOApp {
   def run(args: List[String]): IO[ExitCode] =
-    e1.attempt.debug() *>
+    e1.attempt.debug() *> // <1>
       e2.attempt.debug() *>
       e3.attempt.debug() *>
       IO.pure(ExitCode.Success)

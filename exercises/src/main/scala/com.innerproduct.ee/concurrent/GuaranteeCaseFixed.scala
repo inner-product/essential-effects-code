@@ -3,7 +3,6 @@ package com.innerproduct.ee.concurrent
 import cats.effect._
 import cats.effect.concurrent.Deferred
 import com.innerproduct.ee.debug._
-import cats.implicits._
 
 object GuaranteeCaseFixed extends IOApp {
 

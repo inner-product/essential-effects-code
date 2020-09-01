@@ -1,0 +1,71 @@
+package com.innerproduct.ee.apps
+
+import cats._
+import cats.effect._
+import cats.implicits._
+import com.innerproduct.ee.debug._
+import scala.io.Source
+
+object EarlyRelease extends IOApp {
+  def run(args: List[String]): IO[ExitCode] =
+    dbConnectionResource
+      .use { conn =>
+        conn.query("SELECT * FROM users WHERE id = 12").debug()
+      }
+      .as(ExitCode.Success)
+
+  val dbConnectionResource: Resource[IO, DbConnection] =
+    for {
+      config <- configResource
+      conn <- DbConnection.make(config.connectURL)
+    } yield conn
+
+  val dbConnectionResource2: Resource[IO, DbConnection] =
+    Resource.suspend(
+      loadConfig.map(config => DbConnection.make(config.connectURL))
+    )
+
+  lazy val loadConfig: IO[Config] =
+    sourceResource.use(Config.fromSource)
+
+  lazy val configResource: Resource[IO, Config] = // <1>
+    for {
+      source <- sourceResource
+      config <- Resource.liftF(Config.fromSource(source)) // <2>
+    } yield config
+
+  lazy val sourceResource: Resource[IO, Source] =
+    Resource.make(
+      IO(s"> opening Source to config")
+        .debug() *> IO(Source.fromString(config))
+    )(source => IO(s"< closing Source to config").debug() *> IO(source.close))
+
+  val config = "exampleConnectURL"
+}
+
+case class Config(connectURL: String)
+
+object Config {
+  def fromSource(source: Source): IO[Config] =
+    IO {
+      Config(source.getLines().next)
+    }.flatTap(config => IO(s"read $config").debug())
+
+  implicit val show: Show[Config] = Show.fromToString
+}
+
+trait DbConnection {
+  def query(sql: String): IO[String] // Why not!?
+}
+
+object DbConnection {
+  def make(connectURL: String): Resource[IO, DbConnection] =
+    Resource.make(
+      IO(s"> opening Connection to $connectURL").debug() *> IO(
+        new DbConnection {
+          def query(sql: String): IO[String] =
+            IO(s"""(results for SQL "$sql")""")
+        }
+      )
+    )(_ => IO(s"< closing Connection to $connectURL").debug().void)
+}

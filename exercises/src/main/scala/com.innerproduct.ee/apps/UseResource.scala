@@ -1,7 +1,6 @@
 package com.innerproduct.ee.apps
 
 import cats.effect._
-import cats.implicits._
 import com.innerproduct.ee.debug._
 
 object UseResource extends IOApp {

@@ -1,14 +1,13 @@
 package com.innerproduct.ee
 
-import cats._
 import cats.effect._
 
-case class ThreadName(name: String) extends AnyVal // <1>
+case class ThreadName(name: String) extends AnyVal {
+  override def toString(): String =
+    Colorize.reversed(name)
+}
 
 object ThreadName {
-  def current[F[_]: Sync](): F[ThreadName] = // <2>
-    Sync[F].delay(ThreadName(Thread.currentThread().getName)) // <3>
-
-  implicit val show: Show[ThreadName] =
-    Show.show(tn => Colorize.reversed(tn.name)) // <4>
+  def current(): IO[ThreadName] =
+    IO(ThreadName(Thread.currentThread().getName))
 }

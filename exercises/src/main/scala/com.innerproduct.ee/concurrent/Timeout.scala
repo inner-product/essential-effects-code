@@ -2,7 +2,6 @@ package com.innerproduct.ee.concurrent
 
 import cats.effect._
 import cats.effect.implicits._
-import cats.implicits._
 import com.innerproduct.ee.debug._
 import scala.concurrent.duration._
 
@@ -17,7 +16,7 @@ object Timeout extends IOApp {
       }
     } yield ExitCode.Success
 
-  val task: IO[Unit]    = annotatedSleep("   task", 100.millis) // <7>
+  val task: IO[Unit]    = annotatedSleep("   task", 100.millis) // <6>
   val timeout: IO[Unit] = annotatedSleep("timeout", 500.millis)
 
   def annotatedSleep(name: String, duration: FiniteDuration): IO[Unit] =
@@ -25,5 +24,5 @@ object Timeout extends IOApp {
       IO(s"$name: starting").debug() *>
       Timer[IO].sleep(duration) *> // <5>
       IO(s"$name: done").debug()
-    ).onCancel(IO(s"$name: cancelled").debug().void).void // <6>
+    ).onCancel(IO(s"$name: cancelled").debug().void).void
 }

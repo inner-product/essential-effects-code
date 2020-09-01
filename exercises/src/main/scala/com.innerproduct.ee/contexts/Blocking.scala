@@ -1,7 +1,6 @@
 package com.innerproduct.ee.contexts
 
 import cats.effect._
-import cats.implicits._
 import com.innerproduct.ee.debug._
 import scala.annotation.nowarn
 

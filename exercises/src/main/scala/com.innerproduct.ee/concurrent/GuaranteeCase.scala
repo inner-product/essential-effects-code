@@ -1,7 +1,6 @@
 package com.innerproduct.ee.concurrent
 
 import cats.effect._
-import cats.implicits._
 import com.innerproduct.ee.debug._
 
 object GuaranteeCase extends IOApp {
