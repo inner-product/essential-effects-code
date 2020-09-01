@@ -14,10 +14,14 @@ object AsyncCompletable extends IOApp {
     fromCF(IO(cf()))
 
   @nowarn
-  def fromCF[F[_]: Async, A](cfa: F[CompletableFuture[A]]): F[A] =
-    Async[F].flatMap(cfa) { fa =>
-      Async[F].async { cb =>
-        val handler: (A, Throwable) => Unit = ??? // <1>
+  def fromCF[A](cfa: IO[CompletableFuture[A]]): IO[A] =
+    cfa.flatMap { fa =>
+      IO.async { cb =>
+        val handler: (A, Throwable) => Unit = {// <1>
+          case (a, null) => cb(Right(a))
+          case (null, t) => cb(Left(t))
+          case (null, null) => sys.error("java is broken")
+        }
 
         fa.handle[Unit](handler.asJavaBiFunction)
         
