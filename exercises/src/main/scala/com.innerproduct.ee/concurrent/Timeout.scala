@@ -22,7 +22,7 @@ object Timeout extends IOApp {
   def annotatedSleep(name: String, duration: FiniteDuration): IO[Unit] =
     (
       IO(s"$name: starting").debug() *>
-      Timer[IO].sleep(duration) *> // <5>
+      IO.sleep(duration) *> // <5>
       IO(s"$name: done").debug()
     ).onCancel(IO(s"$name: cancelled").debug().void).void
 }
