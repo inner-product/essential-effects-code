@@ -13,6 +13,6 @@ object Blocking extends IOApp {
   def withBlocker(blocker: Blocker): IO[Unit] =
     for {
       _ <- IO("on default").debug()
-      _ <- blocker.blockOn(IO("on blocker")).debug() // <2>
+      _ <- blocker.blockOn(IO("on blocker").debug()) // <2>
     } yield ()
 }
