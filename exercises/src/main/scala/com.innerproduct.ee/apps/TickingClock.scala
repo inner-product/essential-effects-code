@@ -17,7 +17,9 @@ object TickingClock extends IOApp {
       .as(ExitCode.Success)
 
   val tickingClock: IO[Unit] = // <1>
-    IO(System.currentTimeMillis).debug() >>
-      IO.sleep(1.second) >>
-      tickingClock
+    for {
+      _ <- IO(System.currentTimeMillis).debug()
+      _ <- IO.sleep(1.second)
+      _ <- tickingClock
+    } yield ()
 }

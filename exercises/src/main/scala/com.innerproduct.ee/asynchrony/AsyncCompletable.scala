@@ -1,7 +1,6 @@
 package com.innerproduct.ee.asynchrony
 
 import cats.effect._
-import cats.implicits._
 import com.innerproduct.ee.debug._
 import java.util.concurrent.CompletableFuture
 import scala.jdk.FunctionConverters._
@@ -13,10 +12,10 @@ object AsyncCompletable extends IOApp {
   val effect: IO[String] =
     fromCF(IO(cf()))
 
-  def fromCF[F[_]: Async, A](cfa: F[CompletableFuture[A]]): F[A] =
-    Async[F].flatMap(cfa) { fa =>
-      Async[F].async { cb =>
-        val handler: (A, Throwable) => Unit = { // <1>
+  def fromCF[A](cfa: IO[CompletableFuture[A]]): IO[A] =
+    cfa.flatMap { fa =>
+      IO.async { cb =>
+        val handler: (A, Throwable) => Unit = {
           case (a, null) => cb(Right(a))
           case (null, t) => cb(Left(t))
           case (a, t) => sys.error(s"CompletableFuture handler should always have one null, got: $a, $t")

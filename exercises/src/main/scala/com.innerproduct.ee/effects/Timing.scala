@@ -9,7 +9,7 @@ object Timing extends App {
     MyIO(() => System.currentTimeMillis) // <1>
 
   def time[A](action: MyIO[A]): MyIO[(FiniteDuration, A)] =
-    for {// <2>
+    for { // <2>
       start <- clock
       a <- action
       end <- clock

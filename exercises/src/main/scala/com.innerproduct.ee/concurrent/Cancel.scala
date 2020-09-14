@@ -2,7 +2,6 @@ package com.innerproduct.ee.concurrent
 
 import cats.effect._
 import cats.effect.implicits._
-import cats.implicits._
 import com.innerproduct.ee.debug._
 
 object Cancel extends IOApp {
@@ -11,14 +10,14 @@ object Cancel extends IOApp {
     for {
       fiber <- 
         task
-          .onCancel(IO("i was cancelled").debug().void)
-          .start // <2>
+          .onCancel(IO("i was cancelled").debug().void) // <1>
+          .start
       _ <- IO("pre-cancel").debug()
-      _ <- fiber.cancel // <3>
+      _ <- fiber.cancel // <2>
       _ <- IO("canceled").debug()
     } yield ExitCode.Success
 
   val task: IO[String] =
     IO("task").debug() *>
-      IO.never // <1>
+      IO.never
 }
