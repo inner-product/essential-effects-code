@@ -13,6 +13,6 @@ object ParMapN extends IOApp {
 
   val par =
     (hello, world)
-      .parMapN((h, w) => s"$h $w")
-      .debug() // <2>
+      .parMapN((h, w) => s"$h $w") // <2>
+      .debug() // <3>
 }

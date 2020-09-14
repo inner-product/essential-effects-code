@@ -21,22 +21,10 @@ IO.delay(1 + 2)
 
 // mapN
 // tupled
-// *>
-// <*
 
 // flatMap
-// flatTap
-// >>
 
-// attempt
-// adaptError
 // handleErrorWith
-// onError
-// recover
-// recoverWith
-// redeem
-// redeemWith
-
-// guarantee
-// guaranteeCase
-// onCancel
+// handleError
+// adaptError
+// attempt

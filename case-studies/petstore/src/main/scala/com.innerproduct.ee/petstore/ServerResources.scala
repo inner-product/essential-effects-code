@@ -1,5 +1,6 @@
 package com.innerproduct.ee.petstore
 
+import cats._
 import cats.data._
 import cats.effect._
 import cats.effect.concurrent.Ref
@@ -27,7 +28,7 @@ object ServerResources {
         }
     }
 
-  def orders[F[_]: Sync](
+  def orders[F[_]: Monad](
       pets: PetService[F],
       orderRepo: OrderRepository[F]
   ): OrderService[F] =
@@ -80,7 +81,7 @@ object ServerResources {
 
   def orderRepo[F[_]: Sync]: Resource[F, OrderRepository[F]] =
     for {
-      orders <- Resource.liftF(Ref.of[F, Map[PetOrder.Id, PetOrder]](Map.empty))
+      orders <- Resource.liftF(Ref[F].of(Map.empty[PetOrder.Id, PetOrder]))
     } yield new OrderRepository[F] {
       def create(order: PetOrder): F[PetOrder.Id] =
         orders.modify { orders =>

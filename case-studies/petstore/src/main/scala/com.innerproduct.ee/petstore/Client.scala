@@ -10,7 +10,7 @@ object Client extends IOApp {
   val scruffles = Pet("Scruffles", "dog")
 
   def run(args: List[String]): IO[ExitCode] =
-    pets[IO].use { pets =>
+    pets.use { pets =>
       for {
         id <- pets.give(scruffles)
         pet <- pets.find(id)
@@ -18,8 +18,8 @@ object Client extends IOApp {
       } yield ExitCode.Success
     }
 
-  def pets[F[_]: ConcurrentEffect]: Resource[F, PetService[F]] =
+  def pets: Resource[IO, PetService[IO]] =
     for {
-      client <- BlazeClientBuilder(ExecutionContext.global).resource
+      client <- BlazeClientBuilder[IO](ExecutionContext.global).resource
     } yield ClientResources.pets(client, Uri.uri("http://localhost:8080"))    
 }

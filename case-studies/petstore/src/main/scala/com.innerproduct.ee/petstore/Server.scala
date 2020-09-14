@@ -16,30 +16,28 @@ import scala.concurrent.ExecutionContext
 object Server extends IOApp {
   
   def run(args: List[String]) =
-    runR[IO].use(_ => IO.never)
+    runR.use(_ => IO.never)
 
-  def runR[F[_]: ConcurrentEffect: ContextShift: Timer]: Resource[F, Unit] =
+  def runR: Resource[IO, Unit] =
     for {
       rs <- routes
       _ <- server(Router("/" -> rs).orNotFound)
     } yield ()
 
-  def server[F[_]: ConcurrentEffect: Timer](
-      app: HttpApp[F]
-  ): Resource[F, org.http4s.server.Server[F]] =
-    BlazeServerBuilder[F](ExecutionContext.global)
+  def server(app: HttpApp[IO]): Resource[IO, org.http4s.server.Server[IO]] =
+    BlazeServerBuilder[IO](ExecutionContext.global)
       .bindHttp(8080, "localhost")
       .withHttpApp(app)
       .resource
 
-  def routes[F[_]: Sync: Timer]: Resource[F, HttpRoutes[F]] =
+  def routes: Resource[IO, HttpRoutes[IO]] =
     for {
       pets <- ServerResources
-        .pets[F]
+        .pets[IO]
         .map(addExtraLatency(100.millis))
-      orderRepo <- ServerResources.orderRepo[F]
+      orderRepo <- ServerResources.orderRepo[IO]
       orders = addExtraLatency(100.millis)(ServerResources.orders(pets, orderRepo))
-    } yield Routes.pets[F](pets) <+> Routes.orders[F](orders)
+    } yield Routes.pets[IO](pets) <+> Routes.orders[IO](orders)
 
   def addExtraLatency[Alg[_[_]]: FunctorK, F[_]: Monad: Timer](
       extraLatency: FiniteDuration

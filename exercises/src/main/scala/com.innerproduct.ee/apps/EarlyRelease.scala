@@ -1,8 +1,6 @@
 package com.innerproduct.ee.apps
 
-import cats._
 import cats.effect._
-import cats.implicits._
 import com.innerproduct.ee.debug._
 import scala.io.Source
 
@@ -39,11 +37,10 @@ case class Config(connectURL: String)
 
 object Config {
   def fromSource(source: Source): IO[Config] =
-    IO {
-      Config(source.getLines().next)
-    }.flatTap(config => IO(s"read $config").debug())
-
-  implicit val show: Show[Config] = Show.fromToString
+    for {
+      config <- IO(Config(source.getLines().next))
+      _ <- IO(s"read $config").debug()
+    } yield config
 }
 
 trait DbConnection {

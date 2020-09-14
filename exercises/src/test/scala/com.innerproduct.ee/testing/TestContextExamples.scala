@@ -14,7 +14,7 @@ trait EffectTesting {
 }
 
 class TestContextExamples extends FunSuite with EffectTesting {
-  test("Timer.sleep") {
+  test("IO.sleep") {
     val timeoutError = new TimeoutException
     val timeout = IO.sleep(10.seconds) *> IO.raiseError[Int](timeoutError)
     val f = timeout.unsafeToFuture()
