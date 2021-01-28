@@ -1,16 +1,14 @@
-package com.innerproduct.ee.apps
+package com.innerproduct.ee.resources
 
 import cats.effect._
 import cats.implicits._
-import scala.annotation.nowarn
 
-@nowarn
 object ResourceApp extends IOApp {
   def run(args: List[String]): IO[ExitCode] =
-    resources
+    resources // <1>
       .use { // <3>
         case (a, b, c) =>
-          applicationLogic(a, b, c)
+          applicationLogic(a, b, c) // <2>
       }
       .as(ExitCode.Success)
 
@@ -27,8 +25,8 @@ object ResourceApp extends IOApp {
       c: DependencyC
   ): IO[ExitCode] =
     ???
+  }
 
-  trait DependencyA
-  trait DependencyB
-  trait DependencyC
-}
+trait DependencyA
+trait DependencyB
+trait DependencyC

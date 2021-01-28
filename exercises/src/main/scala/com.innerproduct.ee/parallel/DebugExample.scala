@@ -8,11 +8,11 @@ object DebugExample extends IOApp {
   def run(args: List[String]): IO[ExitCode] =
     seq.as(ExitCode.Success)
 
-  val hello = IO("hello").debug() // <1>
-  val world = IO("world").debug() // <1>
+  val hello = IO("hello").debug // <1>
+  val world = IO("world").debug // <1>
 
   val seq =
     (hello, world)
       .mapN((h, w) => s"$h $w")
-      .debug() // <1>
+      .debug // <1>
 }

@@ -1,4 +1,4 @@
-package com.innerproduct.ee.apps
+package com.innerproduct.ee.resources
 
 import cats.effect._
 import java.io.RandomAccessFile
@@ -20,13 +20,10 @@ class FileBufferReader private (in: RandomAccessFile) { // <1>
 object FileBufferReader {
   val bufferSize = 4096
 
-  def makeResource(
-      fileName: String,
-      closeErrorHandler: Throwable => Unit
-  ): Resource[IO, FileBufferReader] = // <4>
+  def makeResource(fileName: String): Resource[IO, FileBufferReader] = // <4>
     Resource.make {
       IO(new FileBufferReader(new RandomAccessFile(fileName, "r")))
     } { res =>
-      res.close.handleErrorWith(e => IO(closeErrorHandler(e)))
+      res.close
     }
 }

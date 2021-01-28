@@ -14,7 +14,7 @@ object Client extends IOApp {
       for {
         id <- pets.give(scruffles)
         pet <- pets.find(id)
-        _ <- IO(pet == Some(scruffles)).debug()
+        _ <- IO(pet == Some(scruffles)).debug
       } yield ExitCode.Success
     }
 

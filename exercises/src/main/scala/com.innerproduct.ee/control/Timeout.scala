@@ -1,18 +1,17 @@
-package com.innerproduct.ee.concurrent
+package com.innerproduct.ee.control
 
 import cats.effect._
 import cats.effect.implicits._
 import com.innerproduct.ee.debug._
 import scala.concurrent.duration._
 
-// format: off
 object Timeout extends IOApp {
   def run(args: List[String]): IO[ExitCode] =
     for {
       done <- IO.race(task, timeout) // <1>
       _ <- done match { // <2>
-        case Left(_)  => IO("   task: won").debug() // <3>
-        case Right(_) => IO("timeout: won").debug() // <4>
+        case Left(_)  => IO("   task: won").debug // <3>
+        case Right(_) => IO("timeout: won").debug // <4>
       }
     } yield ExitCode.Success
 
@@ -21,8 +20,8 @@ object Timeout extends IOApp {
 
   def annotatedSleep(name: String, duration: FiniteDuration): IO[Unit] =
     (
-      IO(s"$name: starting").debug() *>
+      IO(s"$name: starting").debug *>
       IO.sleep(duration) *> // <5>
-      IO(s"$name: done").debug()
-    ).onCancel(IO(s"$name: cancelled").debug().void).void
+      IO(s"$name: done").debug
+    ).onCancel(IO(s"$name: cancelled").debug.void).void
 }

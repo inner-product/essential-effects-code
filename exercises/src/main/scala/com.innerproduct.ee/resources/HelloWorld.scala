@@ -1,4 +1,4 @@
-package com.innerproduct.ee.apps
+package com.innerproduct.ee.resources
 
 import cats.effect._
 

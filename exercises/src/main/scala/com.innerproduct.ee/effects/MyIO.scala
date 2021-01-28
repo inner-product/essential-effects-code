@@ -8,7 +8,7 @@ object MyIO {
 }
 
 object Printing extends App { // <3>
-  lazy val hello = MyIO.putStr("hello!")
+  val hello = MyIO.putStr("hello!")
 
   hello.unsafeRun()
 }

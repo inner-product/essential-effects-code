@@ -15,21 +15,19 @@ trait EffectTesting {
 
 class TestContextExamples extends FunSuite with EffectTesting {
   test("IO.sleep") {
+    // tag::sleep[]
     val timeoutError = new TimeoutException
-    val timeout = IO.sleep(10.seconds) *> IO.raiseError[Int](timeoutError)
-    val f = timeout.unsafeToFuture()
+    val timeout = IO.sleep(10.seconds) *> IO.raiseError[Int](timeoutError) // <1>
+    val f = timeout.unsafeToFuture() // <2>
 
     // Not yet
-    ctx.tick()
-    assertEquals(f.value, None)
-
-    // Not yet
-    ctx.tick(5.seconds)
-    assertEquals(f.value, None)
+    ctx.tick(5.seconds)         // <3>
+    assertEquals(f.value, None) // <3>
 
     // Good to go:
-    ctx.tick(5.seconds)
-    assertEquals(f.value, Some(Failure(timeoutError)))
+    ctx.tick(5.seconds)                                // <4>
+    assertEquals(f.value, Some(Failure(timeoutError))) // <4>
+    // end::sleep[]
   }
 
   test("IO.race") {

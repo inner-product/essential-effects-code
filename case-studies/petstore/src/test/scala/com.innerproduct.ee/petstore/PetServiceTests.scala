@@ -57,6 +57,6 @@ object PetServiceLaws {
 trait IOLawsForMunitScalaCheck { self: ScalaCheckSuite =>
   implicit def ioIsEq[A](isEq: IsEq[IO[A]]): Prop =
     isEq match {
-      case IsEq(lhs, rhs) => assertEquals(lhs.unsafeRunSync, rhs.unsafeRunSync)
+      case IsEq(lhs, rhs) => assertEquals(lhs.unsafeRunSync(), rhs.unsafeRunSync())
     }
 }

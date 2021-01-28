@@ -8,11 +8,11 @@ object ParTraverse extends IOApp {
   def run(args: List[String]): IO[ExitCode] =
     tasks
       .parTraverse(task) // <1>
-      .debug() // <2>
+      .debug // <2>
       .as(ExitCode.Success)
 
   val numTasks = 100
   val tasks: List[Int] = List.range(0, numTasks)
 
-  def task(id: Int): IO[Int] = IO(id).debug() // <2>
+  def task(id: Int): IO[Int] = IO(id).debug // <2>
 }
