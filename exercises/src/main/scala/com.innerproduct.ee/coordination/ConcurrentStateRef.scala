@@ -16,15 +16,16 @@ object ConcurrentStateRef extends IOApp {
   def tickingClock(ticks: Ref[IO, Long]): IO[Unit] =
     for {
       _ <- IO.sleep(1.second)
-      _ <- IO(System.currentTimeMillis).debug()
-      _ = ticks.update(_ + 1) // <4>
+      _ <- IO(System.currentTimeMillis).debug
+      _ <- ticks.update(_ + 1) // <4>
       _ <- tickingClock(ticks)
     } yield ()
 
   def printTicks(ticks: Ref[IO, Long]): IO[Unit] =
     for {
       _ <- IO.sleep(5.seconds)
-      _ <- IO(s"TICKS: ${ticks.get}").debug().void // <5>
+      n <- ticks.get // <5>
+      _ <- IO(s"TICKS: $n").debug
       _ <- printTicks(ticks)
     } yield ()
 }

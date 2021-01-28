@@ -15,9 +15,19 @@ object CountdownLatch {
       whenDone <- Deferred[IO, Unit]
       state <- Ref[IO].of[State](Outstanding(n, whenDone))
     } yield new CountdownLatch {
-      def await: IO[Unit] = ???
+      def await: IO[Unit] =
+        state.get.flatMap {
+          case Outstanding(_, whenDone) => whenDone.get
+          case Done()                   => IO.unit
+        }
 
-      def decrement: IO[Unit] = ???
+      def decrement: IO[Unit] =
+        state.modify {
+          case Outstanding(1, whenDone) => Done() -> whenDone.complete(())
+          case Outstanding(n, whenDone) =>
+            Outstanding(n - 1, whenDone) -> IO.unit
+          case Done() => Done() -> IO.unit
+        }.flatten
     }
 
   sealed trait State

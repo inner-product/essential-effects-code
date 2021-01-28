@@ -16,7 +16,7 @@ object ConcurrentStateVar extends IOApp {
   val tickingClock: IO[Unit] =
     for {
       _ <- IO.sleep(1.second)
-      _ <- IO(System.currentTimeMillis).debug()
+      _ <- IO(System.currentTimeMillis).debug
       _ = (ticks = ticks + 1) // <3>
       _ <- tickingClock
     } yield ()
@@ -24,7 +24,7 @@ object ConcurrentStateVar extends IOApp {
   val printTicks: IO[Unit] =
     for {
       _ <- IO.sleep(5.seconds)
-      _ <- IO(s"TICKS: $ticks").debug().void // <4>
+      _ <- IO(s"TICKS: $ticks").debug.void // <4>
       _ <- printTicks
     } yield ()
 }

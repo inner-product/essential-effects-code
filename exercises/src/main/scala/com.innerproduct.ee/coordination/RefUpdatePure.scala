@@ -14,7 +14,7 @@ object RefUpdatePure extends IOApp {
 
   def task(id: Int, ref: Ref[IO, Int]): IO[Unit] =
     ref
-      .modify(previous => id -> IO(s"$previous->$id").debug())
+      .modify(previous => id -> IO(s"$previous->$id").debug)
       .flatten
       .replicateA(3)
       .void
