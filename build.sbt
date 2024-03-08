@@ -1,25 +1,36 @@
-ThisBuild / scalaVersion := "2.13.3"
+ThisBuild / scalaVersion := "2.13.12"
 ThisBuild / organization := "com.innerproduct"
 ThisBuild / version := "0.0.1-SNAPSHOT"
 ThisBuild / fork := true
 
-val CatsVersion = "2.2.0"
-val CatsEffectVersion = "2.2.0"
-val CatsTaglessVersion = "0.11"
-val CirceVersion = "0.13.0"
-val Http4sVersion = "0.21.4"
-val LogbackVersion = "1.2.3"
-val MunitVersion = "0.7.8"
+val CatsVersion = "2.9.0"
+val CatsEffectVersion = "3.5.3"
+val MUnitCatsEffectVersion = "1.0.7"
 
 val commonSettings =
   Seq(
     addCompilerPlugin(
-      "org.typelevel" %% "kind-projector" % "0.11.1" cross CrossVersion.full
+      "org.typelevel" %% "kind-projector" % "0.13.2" cross CrossVersion.full
     ),
     libraryDependencies ++= Seq(
-      "org.scalameta" %% "munit" % MunitVersion % Test
+      "org.typelevel" %% "munit-cats-effect-3" % MUnitCatsEffectVersion % Test
     ),
     testFrameworks += new TestFramework("munit.Framework")
+  )
+
+lazy val examples = (project in file("examples"))
+  .dependsOn(exercises % "test->test;compile->compile")
+  .settings(commonSettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "cats-effect" % CatsEffectVersion,
+      "org.typelevel" %% "cats-effect-testkit" % CatsEffectVersion % Test
+    ),
+    // remove fatal warnings since examples have unused and dead code blocks
+    scalacOptions --= Seq(
+      "-Wdead-code",
+      "-Xfatal-warnings"
+    )
   )
 
 lazy val exercises = (project in file("exercises"))
@@ -27,27 +38,12 @@ lazy val exercises = (project in file("exercises"))
   .settings(
     libraryDependencies ++= Seq(
       "org.typelevel" %% "cats-effect" % CatsEffectVersion,
-      "org.typelevel" %% "cats-effect-laws" % CatsEffectVersion % Test
+      "org.typelevel" %% "cats-effect-testkit" % CatsEffectVersion % Test
     ),
     // remove fatal warnings since exercises have unused and dead code blocks
     scalacOptions --= Seq(
+      "-Wdead-code",
+      "-Wunused:params",
       "-Xfatal-warnings"
-    )
-  )
-
-lazy val petstore = (project in file("case-studies") / "petstore")
-  .dependsOn(exercises % "test->test;compile->compile")
-  .settings(commonSettings)
-  .settings(
-    scalacOptions += "-Ymacro-annotations", // required by cats-tagless-macros
-    libraryDependencies ++= Seq(
-      "ch.qos.logback" % "logback-classic" % LogbackVersion,
-      "io.circe" %% "circe-generic" % CirceVersion,
-      "org.http4s" %% "http4s-blaze-server" % Http4sVersion,
-      "org.http4s" %% "http4s-blaze-client" % Http4sVersion,
-      "org.http4s" %% "http4s-circe" % Http4sVersion,
-      "org.http4s" %% "http4s-dsl" % Http4sVersion,
-      "org.typelevel" %% "cats-tagless-macros" % CatsTaglessVersion,
-      "org.scalameta" %% "munit-scalacheck" % MunitVersion % Test
     )
   )

@@ -4,3 +4,4 @@
 .metals
 metals.sbt
 **/target
+.vscode/settings.json

@@ -1,21 +1,21 @@
 package com.innerproduct.ee.parallel
 
 import cats.effect._
-import cats.implicits._
+import cats.syntax.all._
 import com.innerproduct.ee.debug._
 
-object ParMapNErrors extends IOApp {
-  def run(args: List[String]): IO[ExitCode] =
-    e1.attempt.debug *> // <1>
-      IO("---").debug *>
-      e2.attempt.debug *>
-      IO("---").debug *>
-      e3.attempt.debug *>
-      IO.pure(ExitCode.Success)
+object ParMapNErrors extends IOApp.Simple {
+  def run: IO[Unit] =
+    e1.attempt.debug() *> // <1>
+      debugWithThread("---") *>
+      e2.attempt.debug() *>
+      debugWithThread("---") *>
+      e3.attempt.debug() *>
+      IO.unit
 
-  val ok = IO("hi").debug
-  val ko1 = IO.raiseError[String](new RuntimeException("oh!")).debug
-  val ko2 = IO.raiseError[String](new RuntimeException("noes!")).debug
+  val ok = debugWithThread("hi")
+  val ko1 = IO.raiseError[String](new RuntimeException("oh!")).debug()
+  val ko2 = IO.raiseError[String](new RuntimeException("noes!")).debug()
 
   val e1 = (ok, ko1).parMapN((_, _) => ())
   val e2 = (ko1, ok).parMapN((_, _) => ())

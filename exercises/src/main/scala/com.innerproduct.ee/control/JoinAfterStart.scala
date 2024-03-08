@@ -3,15 +3,15 @@ package com.innerproduct.ee.control
 import cats.effect._
 import com.innerproduct.ee.debug._
 
-object JoinAfterStart extends IOApp {
+object JoinAfterStart extends IOApp.Simple {
 
-  def run(args: List[String]): IO[ExitCode] =
+  def run: IO[Unit] =
     for {
       fiber <- task.start // <1>
-      _ <- IO("pre-join").debug // <3>
+      _ <- debugWithThread("pre-join") // <3>
       // <2>
-      _ <- IO("post-join").debug // <3>
-    } yield ExitCode.Success
+      _ <- debugWithThread("post-join") // <3>
+    } yield ()
 
   val task: IO[String] =
     ??? // <3>

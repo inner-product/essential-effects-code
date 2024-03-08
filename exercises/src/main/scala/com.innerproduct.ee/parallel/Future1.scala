@@ -1,6 +1,6 @@
 package com.innerproduct.ee.parallel
 
-import cats.implicits._
+import cats.syntax.all._
 import scala.concurrent._
 import scala.concurrent.duration._
 

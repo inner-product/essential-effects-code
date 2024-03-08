@@ -1,15 +1,14 @@
 package com.innerproduct.ee.coordination
 
 import cats.effect._
-import cats.effect.concurrent.Ref
-import cats.implicits._
+import cats.syntax.all._
 
-object RefUpdateImpure extends IOApp {
-  def run(args: List[String]): IO[ExitCode] =
+object RefUpdateImpure extends IOApp.Simple {
+  def run: IO[Unit] =
     for {
       ref <- Ref[IO].of(0)
       _ <- List(1, 2, 3).parTraverse(task(_, ref)) // <1>
-    } yield ExitCode.Success
+    } yield ()
 
   def task(id: Int, ref: Ref[IO, Int]): IO[Unit] =
     ref

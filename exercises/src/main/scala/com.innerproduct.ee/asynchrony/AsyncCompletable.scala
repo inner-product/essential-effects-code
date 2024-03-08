@@ -1,20 +1,19 @@
 package com.innerproduct.ee.asynchrony
 
 import cats.effect._
-import com.innerproduct.ee.debug._
 import java.util.concurrent.CompletableFuture
 import scala.jdk.FunctionConverters._
 
-object AsyncCompletable extends IOApp {
-  def run(args: List[String]): IO[ExitCode] =
-    effect.debug.as(ExitCode.Success)
+object AsyncCompletable extends IOApp.Simple {
+  def run: IO[Unit] =
+    effect.debug().void
 
   val effect: IO[String] =
     fromCF(IO(cf()))
 
   def fromCF[A](cfa: IO[CompletableFuture[A]]): IO[A] =
     cfa.flatMap { fa =>
-      IO.async { cb =>
+      IO.async_ { cb =>
         val handler: (A, Throwable) => Unit = ??? // <1>
 
         fa.handle(handler.asJavaBiFunction) // <2>

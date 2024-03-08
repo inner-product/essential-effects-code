@@ -1,19 +1,18 @@
 package com.innerproduct.ee.asynchrony
 
 import cats.effect._
-import com.innerproduct.ee.debug._
 import scala.concurrent.ExecutionContext
 
-object AsyncThread extends IOApp {
-  def run(args: List[String]): IO[ExitCode] =
+object AsyncThread extends IOApp.Simple {
+  def run: IO[Unit] =
     for {
-      _ <- IO("on default context").debug
-      _ <- effect.debug
-      _ <- IO("where am I?").debug
-    } yield ExitCode.Success
+      _ <- IO("on default context").debug()
+      _ <- effect.debug()
+      _ <- IO("where am I?").debug()
+    } yield ()
 
   val effect: IO[String] =
-    IO.async { cb =>
+    IO.async_ { cb =>
       ExecutionContext.global.execute {
         new Runnable {
           def run() = ???

@@ -2,13 +2,13 @@ package com.innerproduct.ee.control
 
 import cats.effect._
 
-object Start extends IOApp {
+object Start extends IOApp.Simple {
 
-  def run(args: List[String]): IO[ExitCode] =
+  def run: IO[Unit] =
     for {
       fiber <- task.start // <1>
       // <2>
-    } yield ExitCode.Success
+    } yield ()
 
   val task: IO[String] =
     ??? // <2>

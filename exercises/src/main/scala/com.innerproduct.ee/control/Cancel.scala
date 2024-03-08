@@ -3,17 +3,17 @@ package com.innerproduct.ee.control
 import cats.effect._
 import com.innerproduct.ee.debug._
 
-object Cancel extends IOApp {
+object Cancel extends IOApp.Simple {
 
-  def run(args: List[String]): IO[ExitCode] =
+  def run: IO[Unit] =
     for {
       fiber <- task.start // <2>
-      _ <- IO("pre-cancel").debug
+      _ <- debugWithThread("pre-cancel")
       // <3>
-      _ <- IO("canceled").debug
-    } yield ExitCode.Success
+      _ <- debugWithThread("canceled")
+    } yield ()
 
   val task: IO[Nothing] =
-    IO("task").debug *>
+    debugWithThread("task") *>
       IO.never // <1>
 }

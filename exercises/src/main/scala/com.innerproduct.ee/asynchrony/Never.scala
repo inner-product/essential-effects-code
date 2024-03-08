@@ -1,14 +1,12 @@
 package com.innerproduct.ee.asynchrony
 
 import cats.effect._
-import com.innerproduct.ee.debug._
 
-object Never extends IOApp {
-  def run(args: List[String]): IO[ExitCode] =
+object Never extends IOApp.Simple {
+  def run: IO[Unit] =
     never
-      .guarantee(IO("i guess never is now").debug.void)
-      .as(ExitCode.Success)
+      .guarantee(IO.println("i guess never is now"))
 
   val never: IO[Nothing] =
-    IO.async(???) // <1>
+    IO.async_(???) // <1>
 }

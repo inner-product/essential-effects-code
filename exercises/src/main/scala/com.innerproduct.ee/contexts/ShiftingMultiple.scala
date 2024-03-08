@@ -5,18 +5,16 @@ import com.innerproduct.ee.debug._
 import java.util.concurrent.Executors
 import scala.concurrent.ExecutionContext
 
-object ShiftingMultiple extends IOApp {
+object ShiftingMultiple extends IOApp.Simple {
 
-  def run(args: List[String]): IO[ExitCode] =
+  def run: IO[Unit] =
     (ec("1"), ec("2")) match { // <1>
       case (ec1, ec2) =>
         for {
-          _ <- IO("one").debug // <2>
-          _ <- IO.shift(ec1) // <3>
-          _ <- IO("two").debug // <3>
-          _ <- IO.shift(ec2) // <4>
-          _ <- IO("three").debug // <4>
-        } yield ExitCode.Success
+          _ <- debugWithThread("one").evalOn(ec1) // <2>
+          _ <- debugWithThread("two").evalOn(ec2) // <3>
+          _ <- debugWithThread("three") // <4>
+        } yield ()
     }
 
   def ec(name: String): ExecutionContext = // <5>
